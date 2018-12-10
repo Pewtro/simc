@@ -298,6 +298,7 @@ public:
     azerite_power_t haze_of_rage;
     azerite_power_t primal_instincts;
     azerite_power_t serrated_jaws;
+    azerite_power_t dire_consequences;
     // Marksmanship
     azerite_power_t focused_fire;
     azerite_power_t in_the_rhythm;
@@ -1439,6 +1440,12 @@ struct kill_command_base_t: public hunter_pet_action_t<hunter_main_pet_base_t, m
     bool procced = false;
   } serrated_jaws;
 
+  struct {
+    double chance = 0;
+    double bonus_da = 0;
+    double procced = false;
+  } dire_consequences;
+
   kill_command_base_t( hunter_main_pet_base_t* p, const spell_data_t* s ):
     hunter_pet_action_t( "kill_command", p, s )
   {
@@ -1451,6 +1458,14 @@ struct kill_command_base_t: public hunter_pet_action_t<hunter_main_pet_base_t, m
       serrated_jaws.energize_amount = o() -> azerite.serrated_jaws.spell() -> effectN( 2 ).base_value();
       serrated_jaws.bonus_da = o() -> azerite.serrated_jaws.value( 1 );
       serrated_jaws.gain = p -> regen_type != REGEN_DISABLED ? p -> get_gain( "serrated_jaws" ) : nullptr;
+    }
+
+    if ( o() -> azerite.dire_consequences.ok() )
+    {
+      dire_consequences.bonus_da = o() -> azerite.dire_consequences.value( 1 );
+
+      if( o() -> specialization() == HUNTER_SURVIVAL )
+        dire_consequences.bonus_da = o() -> azerite.dire_consequences.value( 2 );
     }
   }
 
@@ -1470,6 +1485,9 @@ struct kill_command_base_t: public hunter_pet_action_t<hunter_main_pet_base_t, m
 
     if ( serrated_jaws.procced )
       b += serrated_jaws.bonus_da;
+
+    if ( o() -> azerite.dire_consequences.ok() )
+      b += dire_consequences.bonus_da;
 
     return b;
   }
@@ -4647,6 +4665,7 @@ void hunter_t::init_spells()
   azerite.haze_of_rage          = find_azerite_spell( "Haze of Rage" );
   azerite.primal_instincts      = find_azerite_spell( "Primal Instincts" );
   azerite.serrated_jaws         = find_azerite_spell( "Serrated Jaws" );
+  azerite.dire_consequences     = find_azerite_spell( "Dire Consequences" );
 
   azerite.focused_fire          = find_azerite_spell( "Focused Fire" );
   azerite.in_the_rhythm         = find_azerite_spell( "In The Rhythm" );
