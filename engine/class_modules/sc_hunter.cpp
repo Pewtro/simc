@@ -282,6 +282,11 @@ struct hunter_t: public player_t
 {
 public:
 
+  struct rppms_t
+  {
+    real_ppm_t* dire_consequences;
+  } rppm;
+
   struct pets_t
   {
     pets::hunter_main_pet_t* main;
@@ -385,6 +390,9 @@ public:
   {
     proc_t* wild_call;
     proc_t* lethal_shots;
+
+    //Azerite
+    proc_t* dire_consequences;
   } procs;
 
   // Talents
@@ -1441,9 +1449,7 @@ struct kill_command_base_t: public hunter_pet_action_t<hunter_main_pet_base_t, m
   } serrated_jaws;
 
   struct {
-    double chance = 0;
     double bonus_da = 0;
-    double procced = false;
   } dire_consequences;
 
   kill_command_base_t( hunter_main_pet_base_t* p, const spell_data_t* s ):
@@ -1477,6 +1483,11 @@ struct kill_command_base_t: public hunter_pet_action_t<hunter_main_pet_base_t, m
 
     if ( serrated_jaws.procced && serrated_jaws.gain )
       p() -> resource_gain( RESOURCE_FOCUS, serrated_jaws.energize_amount, serrated_jaws.gain, this );
+
+    if ( o() -> azerite.dire_consequences.ok() && o() -> rppm.dire_consequences -> trigger() ) 
+    {
+      o() -> buffs.dire_beast -> trigger();
+    }
   }
 
   double bonus_da( const action_state_t* s ) const override
@@ -4941,14 +4952,18 @@ void hunter_t::init_procs()
 {
   player_t::init_procs();
 
-  procs.wild_call    = get_proc( "Wild Call" );
-  procs.lethal_shots = get_proc( "Lethal Shots" );
+  procs.wild_call         = get_proc( "Wild Call" );
+  procs.lethal_shots      = get_proc( "Lethal Shots" );
+  procs.dire_consequences = get_proc( "Dire Consequences" ); 
 }
 
 // hunter_t::init_rng =======================================================
 
 void hunter_t::init_rng()
 {
+  //RPPM objects
+  rppm.dire_consequences = get_rppm("dire_consequences", azerite.dire_consequences.spell() -> effectN( 1 ).trigger() -> real_ppm() );
+
   player_t::init_rng();
 }
 
