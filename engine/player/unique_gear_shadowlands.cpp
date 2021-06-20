@@ -2749,6 +2749,43 @@ void chaos_bane( special_effect_t& effect )
   effect.proc_flags2_ = PF2_ALL_HIT | PF2_PERIODIC_DAMAGE | PF2_PERIODIC_HEAL;
   new chaos_bane_cb_t( effect, buff, cd );
 }
+
+/**
+ * driver=353513 
+ * trigger=353514 
+ */
+void dark_rangers_quiver( special_effect_t& effect )
+{
+
+  struct withering_fire_damage_t : public proc_spell_t
+  {
+    withering_fire_damage_t( const special_effect_t& e ) 
+      : proc_spell_t( "withering_fire", e.player, e.player->find_spell( 353513 ) )
+      {
+        base_dd_min = e.driver()->effectN( 1 ).min( e.item );
+        base_dd_max = e.driver()->effectN( 1 ).max( e.item );
+      }
+  };
+
+  struct withering_fire_callback_t : public dbc_proc_callback_t
+  {
+    using dbc_proc_callback_t::dbc_proc_callback_t;
+
+    void execute( action_t*, action_state_t* state ) override
+    {
+      if ( state->target->is_sleeping() )
+        return;
+
+      proc_action->target = target( state );
+      proc_action->schedule_execute();
+    }
+  };
+
+  effect.execute_action = create_proc_action<withering_fire_damage_t>( "withering_fire", effect );
+
+  new withering_fire_callback_t( effect.player, effect );
+
+}
 }  // namespace items
 
 void register_hotfixes()
@@ -2832,6 +2869,9 @@ void register_special_effects()
 
     // Weapons
     unique_gear::register_special_effect( 331011, items::poxstorm );
+
+    // Cloaks
+    unique_gear::register_special_effect( 353513, items::dark_rangers_quiver ); 
 
     // Runecarves
     unique_gear::register_special_effect( 338477, items::echo_of_eonar );
