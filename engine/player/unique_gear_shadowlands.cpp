@@ -2767,24 +2767,14 @@ void dark_rangers_quiver( special_effect_t& effect )
       }
   };
 
-  struct withering_fire_callback_t : public dbc_proc_callback_t
+  effect.custom_buff = buff_t::find( effect.player, "withering_fire" ); 
+  if( !effect.custom_buff ) 
   {
-    using dbc_proc_callback_t::dbc_proc_callback_t;
+    effect.custom_buff = make_buff<buff_t>( effect.player, "withering_fire", effect.player -> find_spell ( 353514 ) )
+    -> set_max_stack( 5 );
+  }
 
-    void execute( action_t*, action_state_t* state ) override
-    {
-      if ( state->target->is_sleeping() )
-        return;
-
-      proc_action->target = target( state );
-      proc_action->schedule_execute();
-    }
-  };
-
-  effect.execute_action = create_proc_action<withering_fire_damage_t>( "withering_fire", effect );
-
-  new withering_fire_callback_t( effect.player, effect );
-
+  new dbc_proc_callback_t( effect.player, effect );
 }
 }  // namespace items
 
