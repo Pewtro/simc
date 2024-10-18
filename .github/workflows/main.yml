@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ thewarwithin ]
   push:
-    branches: [ thewarwithin ]
+    branches: [ thewarwithin, feat/ptr-test ]
     paths-ignore:
       - 'ActionPriorityLists/**'
       - 'SpellDataDump/*.txt'
@@ -341,7 +341,8 @@ jobs:
         cppVersion: [17]
         compiler: [clang++-15]
         spec: [
-            shaman_elemental
+            shaman_elemental,
+            hunter_beast_mastery, hunter_marksmanship, hunter_survival,
           ]
         fightstyle: [singletarget, multitarget, dungeonslice]
         include:
