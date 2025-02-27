@@ -44,7 +44,7 @@ jobs:
           }
         with:
           path: ${{ github.workspace }}/.ccache
-          key: ${{ env.ccache-prefix }}-${{ github.event.head_commit.id }}
+          key: ${{ env.ccache-prefix }}-${{ github.event.after }}
           restore-keys: ${{ env.ccache-prefix }}-
 
       - name: Install deps
@@ -78,7 +78,7 @@ jobs:
             tests
             generate_profiles_ci.sh
             .git
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
 
   ubuntu-clang-build:
     name: ubuntu-build-${{ matrix.compiler }}-C++${{ matrix.cppVersion }}
@@ -107,7 +107,7 @@ jobs:
           }
         with:
           path: ${{ github.workspace }}/.ccache
-          key: ${{ env.ccache-prefix }}-${{ github.event.head_commit.id }}
+          key: ${{ env.ccache-prefix }}-${{ github.event.after }}
           restore-keys: ${{ env.ccache-prefix }}-
 
       - name: Install deps
@@ -147,7 +147,7 @@ jobs:
             tests
             generate_profiles_ci.sh
             .git
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
 
   spec-test:
     name: spec-test-${{ matrix.spec }}-${{ matrix.fightstyle }}
@@ -218,7 +218,7 @@ jobs:
             tests
             generate_profiles_ci.sh
             .git
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
 
       - name: Setup
         id: setup
@@ -342,7 +342,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: apl-${{ github.event.head_commit.id }}-${{ matrix.spec }}
+          name: apl-${{ github.event.after }}-${{ matrix.spec }}
           path: ${{ matrix.spec }}.simc
           retention-days: 1
 
@@ -377,7 +377,7 @@ jobs:
             tests
             generate_profiles_ci.sh
             .git
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
       - name: Setup
         id: setup
         env:
@@ -496,7 +496,7 @@ jobs:
             tests
             generate_profiles_ci.sh
             .git
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
 
       - uses: actions/checkout@v4
 
@@ -504,11 +504,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ActionPriorityLists
-          pattern: apl-${{ github.event.head_commit.id }}-*
+          pattern: apl-${{ github.event.after }}-*
           merge-multiple: true
 
       - name: Setup
-        run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.event.head_commit.id }})" >> $GITHUB_ENV
+        run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.event.after }})" >> $GITHUB_ENV
 
       - name: Run
         env:
@@ -528,7 +528,7 @@ jobs:
       - name: Cleanup
         uses: geekyeggo/delete-artifact@v5
         with:
-          name: apl-${{ github.event.head_commit.id }}-*
+          name: apl-${{ github.event.after }}-*
 
   update-generated-apl-modules:
     name: Action Priority List Dump / Regenerate Profiles
@@ -550,12 +550,12 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/b/ninja/simc
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
 
       - uses: actions/checkout@v4
 
       - name: Setup
-        run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.event.head_commit.id }})" >> $GITHUB_ENV
+        run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.event.after }})" >> $GITHUB_ENV
 
       - name: Run
         env:
@@ -610,7 +610,7 @@ jobs:
             tests
             generate_profiles_ci.sh
             .git
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
 
       - name: Run
         env:
@@ -641,7 +641,7 @@ jobs:
             tests
             generate_profiles_ci.sh
             .git
-          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.head_commit.id }}-cpp-${{ matrix.cppVersion }}
+          key: ubuntu-${{ matrix.compiler }}-for_run-${{ github.event.after }}-cpp-${{ matrix.cppVersion }}
 
       - uses: actions/checkout@v4
 
@@ -658,7 +658,7 @@ jobs:
           fi
 
       - name: Setup
-        run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.event.head_commit.id }})" >> $GITHUB_ENV
+        run: echo "SHORT_SHA=$(git rev-parse --short ${{ github.event.after }})" >> $GITHUB_ENV
 
       - name: Commit Spell Data
         continue-on-error: true
