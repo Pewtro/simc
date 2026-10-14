@@ -5352,6 +5352,11 @@ struct aimed_shot_base_t : public hunter_ranged_attack_t
   {
     double c = hunter_ranged_attack_t::composite_target_crit_chance( target );
 
+    // Arcane Talons also raises the crit chance of the next Aimed Shot alongside the Rapid Fire damage bonus.
+    // Theoretically the regular spotters mark is also affected by Arcane Talons, but since it gets replaced by Sentinels Mark which is not affected it shouldn't matter.
+    if ( p()->talents.arcane_talons.ok() && td( target )->debuffs.spotters_mark_rapid_fire->check() )
+      c += p()->talents.arcane_talons->effectN( 2 ).percent();
+
     return c;
   }
 
